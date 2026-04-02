@@ -2,6 +2,7 @@ import { BrowserRouter, Routes, Route } from "react-router-dom";
 import StartPage from "./pages/StartPage";
 import GamePage from "./pages/GamePage";
 import HighscorePage from "./pages/HighscorePage";
+import AboutPage from "./pages/AboutPage";
 
 export default function App() {
   return (
