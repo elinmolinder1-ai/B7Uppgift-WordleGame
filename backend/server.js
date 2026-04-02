@@ -1,6 +1,9 @@
 
-//Skapa server
 import express from "express";
+import gameRoutes from "./routes/gameRoutes.js";
+import scoreRoutes from "./routes/scoreRoutes.js";
+import pageRoutes from "./routes/pageRoutes.js";
+
 
 const app = express();
 app.use(express.json());
