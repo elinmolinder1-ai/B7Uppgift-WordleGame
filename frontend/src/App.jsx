@@ -8,9 +8,9 @@ export default function App() {
   return (
     <BrowserRouter>
       <Routes>
- <Route path="/" element={<StartPage />} />
+        <Route path="/" element={<StartPage />} />
         <Route path="/game/:gameId" element={<GamePage />} />
- <Route path="/highscore" element={<HighscorePage />} />
+        <Route path="/highscore" element={<HighscorePage />} />
         <Route path="/about" element={<AboutPage />} />
       </Routes>
     </BrowserRouter>

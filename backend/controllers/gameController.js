@@ -3,31 +3,30 @@ import { getFeedback } from "../algorithms/getFeedback.js";
 import { chooseWord } from "../algorithms/chooseWord.js";
 
 
-// Lagring i minnet
 let games = {};
 
-// Skapa unikt gameId
+// Create a unique game ID
 function generateGameId() {
   return Math.random().toString(36).substring(2, 10);
 }
 
 // -------------------------
-// STARTA NYTT SPEL
+// START NEW GAME
 // -------------------------
 export function startGame(req, res) {
   const { wordLength, uniqueLetters } = req.body;
 
-  // 1. Välj ord baserat på inställningar
+  // 1. Choose a word based on length and unique-letter setting
   const word = chooseWord(WORDS, wordLength, uniqueLetters);
 
   if (!word) {
     return res.status(400).json({ error: "No word found with these settings" });
   }
 
-  // 2. Skapa gameId
- const gameId = generateGameId();
+  // 2. Create a unique game ID
+  const gameId = generateGameId();
 
-  // 3. Spara spelet i memory
+  // 3. Save the game in memory
   games[gameId] = {
     word,
     wordLength,
@@ -39,7 +38,7 @@ export function startGame(req, res) {
     startTime: Date.now()
   };
 
-  // 4. Skicka tillbaka gameId + inställningar
+  // 4. Send back game settings and ID
   res.json({
     gameId,
     wordLength,
@@ -59,6 +58,7 @@ export function getGame(req, res) {
     return res.status(404).json({ error: "Game not found" });
   }
 
+  // Return the current game state
   res.json({
     wordLength: game.wordLength,
     attemptsLeft: game.attemptsLeft,
@@ -72,7 +72,7 @@ export function getGame(req, res) {
 
 
 // -------------------------
-// GISSNING
+// GUESS WORD
 // -------------------------
 export function guessWord(req, res) {
   const { gameId, guess } = req.body;
@@ -82,24 +82,30 @@ export function guessWord(req, res) {
     return res.status(404).json({ error: "Game not found" });
   }
 
-  // feedback-algoritm
+  // Run feedback algorithm to compare guess with the correct word
   const result = getFeedback(guess, game.word);
 
-game.guesses.push({ guess, result });
+  // Save the guess and feedback
+  game.guesses.push({ guess, result });
 
+  // Reduce attempts
   game.attemptsLeft--;
 
+  // Check if player won
   if (guess.toUpperCase() === game.word.toUpperCase()) {
     game.win = true;
     game.gameOver = true;
   }
 
+  // Check if player lost
   if (game.attemptsLeft === 0) {
     game.gameOver = true;
   }
 
+  // Calculate time used so far
   const timeTaken = Date.now() - game.startTime;
 
+  // Send updated game state
   res.json({
     result,
     attemptsLeft: game.attemptsLeft,

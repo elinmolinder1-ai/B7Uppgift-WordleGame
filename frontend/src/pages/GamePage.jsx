@@ -2,11 +2,14 @@ import { useEffect, useState } from "react";
 import { useParams, useNavigate } from "react-router-dom";
 
 export default function GamePage() {
+
+  // Get gameId from the URL
   const { gameId } = useParams();
-  console.log("gameId:", gameId);
+
 
   const navigate = useNavigate();
 
+  // Game state from backend
   const [wordLength, setWordLength] = useState(null);
   const [attemptsLeft, setAttemptsLeft] = useState(null);
   const [guesses, setGuesses] = useState([]);
@@ -17,14 +20,16 @@ export default function GamePage() {
   // Highscore-data
   const [playerName, setPlayerName] = useState("");
   const [startTime, setStartTime] = useState(null);
-  const [uniqueLetters, setUniqueLetters] = useState(false); // om du sparar detta i spelet
+  const [uniqueLetters, setUniqueLetters] = useState(false);
 
-  // Hämta spelet
+  // Load game data when page opens
   useEffect(() => {
     async function loadGame() {
       const res = await fetch(`/api/game/${gameId}`);
       const data = await res.json();
 
+
+      // Set game info from backend
       setWordLength(data.wordLength);
       setAttemptsLeft(data.attemptsLeft);
       setGuesses(data.guesses);
@@ -32,15 +37,17 @@ export default function GamePage() {
       setWin(data.win);
       setUniqueLetters(data.uniqueLetters);
 
-      // Starta tidtagning
+      // Start timer
       setStartTime(Date.now());
     }
 
     loadGame();
   }, [gameId]);
 
-  // Skicka gissning
+  // Send a guess to the backend
   async function sendGuess() {
+
+    // Only allow guesses with correct length
     if (guess.length !== wordLength) return;
 
     const res = await fetch("/api/game/guess", {
@@ -57,6 +64,7 @@ export default function GamePage() {
 
     const data = await res.json();
 
+    // Update game state after guess
     setGuesses([...guesses, data.result]);
     setAttemptsLeft(data.attemptsLeft);
     setGameOver(data.gameOver);
@@ -64,7 +72,7 @@ export default function GamePage() {
     setGuess("");
   }
 
-  // Skicka highscore
+  // Send highscore to backend
   async function submitHighscore() {
     const timeTaken = Date.now() - startTime;
 
@@ -79,17 +87,18 @@ export default function GamePage() {
         uniqueLetters
       })
     });
-
+    // Go to highscore page
     navigate("/highscore");
   }
 
+  // Show loading text until game data is ready
   if (!wordLength) return <p>Loading game...</p>;
 
-  // Färg för rutorna
+  // Choose tile color based on result
   function getColor(result) {
-    if (result === "correct") return "#6aaa64";   // grön
-    if (result === "misplaced") return "#c9b458"; // gul
-    return "#787c7e";                              // grå
+    if (result === "correct") return "#6aaa64";  
+    if (result === "misplaced") return "#c9b458";
+    return "#787c7e";                             
   }
 
   return (
