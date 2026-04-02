@@ -1,25 +1,12 @@
-let highscores = [];
+import { Highscore } from "../models/Highscore.js";
 
-export function saveHighscore(req, res) {
-  const { name, timeTaken, guesses, wordLength, uniqueLetters } = req.body;
-
-  const entry = {
-    name,
-    timeTaken,
-    guesses,
-    wordLength,
-    uniqueLetters,
-    date: Date.now()
-  };
-
-  highscores.push(entry);
-
-  // sortera snabbast först
-  highscores.sort((a, b) => a.timeTaken - b.timeTaken);
-
-  res.json({ success: true });
+// Get all scores from MongoDB
+export async function getAllScores() {
+  return await Highscore.find().sort({ timeTaken: 1 });
 }
 
-export function getHighscores(req, res) {
-  res.json(highscores.slice(0, 20));
+// Save a new score to MongoDB
+export async function saveScore(scoreData) {
+  const score = new Highscore(scoreData);
+  await score.save();
 }

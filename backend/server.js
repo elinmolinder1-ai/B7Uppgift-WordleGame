@@ -7,11 +7,22 @@ import gameRoutes from "./routes/gameRoutes.js";
 import scoreRoutes from "./routes/scoreRoutes.js";
 import pageRoutes from "./routes/pageRoutes.js";
 import { loadSwedishWords } from "./utils/swedishWords.js";
+import { connectDB } from "./database/mongoose.js";
+
 
 // Load the Swedish word list when the server starts
 loadSwedishWords();
 
+//connect to MongoDB 
+connectDB();
+
+
 const app = express();
+
+// Configure EJS before routes
+app.set("view engine", "ejs");
+app.set("views", "./views");
+
 
 // Allow JSON in request bodies
 app.use(express.json());
