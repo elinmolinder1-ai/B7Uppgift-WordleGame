@@ -3,7 +3,9 @@ import express from "express";
 import gameRoutes from "./routes/gameRoutes.js";
 import scoreRoutes from "./routes/scoreRoutes.js";
 import pageRoutes from "./routes/pageRoutes.js";
+import { loadSwedishWords } from "./utils/swedishWords.js";
 
+loadSwedishWords();
 
 const app = express();
 app.use(express.json());
