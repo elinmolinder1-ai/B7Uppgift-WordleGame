@@ -6,7 +6,7 @@
  * - incorrect: bokstaven finns inte i ordet (eller är redan förbrukad)
  */
 
-export function feedback(guess, answer) {
+export function getFeedback(guess, answer) {
   // Normalisera case
   guess = guess.toUpperCase();
   answer = answer.toUpperCase();
