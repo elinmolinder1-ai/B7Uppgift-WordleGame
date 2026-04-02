@@ -21,7 +21,7 @@ export default function StartPage() {
       const data = await res.json();
 
       // Navigera till GamePage med gameId
-      navigate(`/game/${data.gameId}`);
+navigate(`/game/${data.gameId}`);
     } catch (error) {
       console.error("Could not start game:", error);
     }
