@@ -9,14 +9,12 @@ export default function HighscorePage() {
   const [scores, setScores] = useState([]);
   const navigate = useNavigate();
 
-  // Load highscores when the page opens
   useEffect(() => {
     async function loadScores() {
       const res = await fetch("/api/highscore");
       const data = await res.json();
       setScores(data);
     }
-
     loadScores();
   }, []);
 
@@ -24,19 +22,35 @@ export default function HighscorePage() {
     <div style={{ padding: "2rem" }}>
       <h1>Highscores</h1>
 
-      {/* Show message if no scores exist */}
       {scores.length === 0 && <p>No highscores yet.</p>}
 
-      {/* List all highscores */}
-      <ul>
-        {scores.map((s, i) => (
-          <li key={i} style={{ marginBottom: "1rem" }}>
-            <strong>{s.name}</strong> – {s.timeTaken} ms – {s.wordLength} letters
+      <ul style={{ listStyle: "none", padding: 0 }}>
+        {scores.map((s) => (
+          <li
+            key={s._id}
+            style={{
+              marginBottom: "1rem",
+              padding: "1rem",
+              border: "1px solid #ccc",
+              borderRadius: "8px",
+              background: "#f9f9f9"
+            }}
+          >
+            <strong>{s.name}</strong>  
+            <br />
+            Time: {(s.timeTaken / 1000).toFixed(2)} sec  
+            <br />
+            Word: <strong>{s.word}</strong>  
+            <br />
+            Guesses: {s.guesses?.length ?? 0}
+            <br />
+            Word length: {s.wordLength}
+            <br />
+            Unique letters: {s.uniqueLetters ? "Yes" : "No"}
           </li>
         ))}
       </ul>
 
-      {/* Button to go back and start a new game */}
       <button
         onClick={() => navigate("/")}
         style={{
