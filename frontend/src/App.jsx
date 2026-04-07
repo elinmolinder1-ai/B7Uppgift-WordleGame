@@ -4,6 +4,7 @@ import GamePage from "./pages/GamePage";
 import HighscorePage from "./pages/HighscorePage";
 import AboutPage from "./pages/AboutPage";
 
+// This file sets up the routes so the app shows the right page for each URL.
 export default function App() {
   return (
     <BrowserRouter>

@@ -1,6 +1,7 @@
-// This file sets up the Express server and connects all routes.
+/* This file sets up the Express server and connects all routes.
 // It also loads the Swedish word list before the server starts.
 // The server handles game logic, highscores, and simple page routes.
+*/
 
 import express from "express";
 import gameRoutes from "./routes/gameRoutes.js";

@@ -21,6 +21,8 @@ export default function GamePage() {
   const [playerName, setPlayerName] = useState("");
   const [startTime, setStartTime] = useState(null);
   const [uniqueLetters, setUniqueLetters] = useState(false);
+  const [correctWord, setCorrectWord] = useState("");
+
 
   // Load game data when page opens
   useEffect(() => {
@@ -44,52 +46,58 @@ export default function GamePage() {
     loadGame();
   }, [gameId]);
 
-  // Send a guess to the backend
-  async function sendGuess() {
+async function sendGuess() {
+  if (guess.length !== wordLength) return;
 
-    // Only allow guesses with correct length
-    if (guess.length !== wordLength) return;
+  const res = await fetch("/api/game/guess", {
+    method: "POST",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify({ gameId, guess })
+  });
 
-    const res = await fetch("/api/game/guess", {
-      method: "POST",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({ gameId, guess })
-    });
-
-    if (!res.ok) {
-      const text = await res.text();
-      console.error("Server error:", text);
-      return;
-    }
-
-    const data = await res.json();
-
-    // Update game state after guess
-    setGuesses([...guesses, data.result]);
-    setAttemptsLeft(data.attemptsLeft);
-    setGameOver(data.gameOver);
-    setWin(data.win);
-    setGuess("");
+  if (!res.ok) {
+    const text = await res.text();
+    console.error("Server error:", text);
+    return;
   }
+
+  const data = await res.json();
+
+  setGuesses([...guesses, data.result]);
+  setAttemptsLeft(data.attemptsLeft);
+  setGameOver(data.gameOver);
+  setWin(data.win);
+  setUniqueLetters(data.uniqueLetters);  
+  setGuess("");
+
+  if (data.gameOver && data.win) {
+    setCorrectWord(data.correctWord);
+  }
+}
+
+
+
 
   // Send highscore to backend
-  async function submitHighscore() {
-    const timeTaken = Date.now() - startTime;
+ async function submitHighscore() {
+  const timeTaken = Date.now() - startTime;
 
-    await fetch("/api/highscore", {
-      method: "POST",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({
-        name: playerName,
-        timeTaken,
-        guesses,
-        wordLength,
-        uniqueLetters
-      })
-    });
-    // Go to highscore page
-    navigate("/highscore");
-  }
+  await fetch("/api/highscore", {
+    method: "POST",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify({
+      name: playerName,
+      timeTaken,
+      guesses,
+      wordLength,
+      uniqueLetters,
+      word: correctWord   // send the right word 
+    })
+  });
+
+  navigate("/highscore");
+}
+
 
   // Show loading text until game data is ready
   if (!wordLength) return <p>Loading game...</p>;
@@ -160,7 +168,7 @@ export default function GamePage() {
         </h2>
       )}
 
-      {/* Highscore-formulär */}
+      {/* Highscore-form */}
       {gameOver && win && (
         <div style={{ marginTop: "1.5rem" }}>
           <h3>Du vann! Skriv ditt namn:</h3>

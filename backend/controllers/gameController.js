@@ -82,30 +82,41 @@ export function guessWord(req, res) {
     return res.status(404).json({ error: "Game not found" });
   }
 
-  // Run feedback algorithm to compare guess with the correct word
+  // Run feedback algorithm
   const result = getFeedback(guess, game.word);
 
-  // Save the guess and feedback
+  // Save guess
   game.guesses.push({ guess, result });
 
   // Reduce attempts
   game.attemptsLeft--;
 
-  // Check if player won
+  // Check win
   if (guess.toUpperCase() === game.word.toUpperCase()) {
     game.win = true;
     game.gameOver = true;
   }
 
-  // Check if player lost
+  // Check loss
   if (game.attemptsLeft === 0) {
     game.gameOver = true;
   }
 
-  // Calculate time used so far
   const timeTaken = Date.now() - game.startTime;
 
-  // Send updated game state
+  if (game.gameOver) {
+    return res.json({
+      result,
+      attemptsLeft: game.attemptsLeft,
+      gameOver: game.gameOver,
+      win: game.win,
+      wordLength: game.wordLength,
+      uniqueLetters: game.uniqueLetters,
+      timeTaken,
+      correctWord: game.word 
+    });
+  }
+
   res.json({
     result,
     attemptsLeft: game.attemptsLeft,
