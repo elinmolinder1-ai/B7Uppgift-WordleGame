@@ -65,11 +65,14 @@ export default function StartPage() {
       <button
         onClick={startGame}
         style={{
-          padding: "0.5rem 1rem",
-          fontSize: "1.2rem",
-          cursor: "pointer",
-          margin: "10px",
-          borderRadius: "8px"
+  padding: "0.5rem 1rem",
+  fontSize: "1.2rem",
+  cursor: "pointer",
+  margin: "10px",
+  borderRadius: "8px",
+  background: "#6aaa64",
+  color: "white",
+  border: "none"
         }}
       >
         Start Game
@@ -77,9 +80,9 @@ export default function StartPage() {
 
       {/*SSR highscore must use a normal <a> link */}
       <a
-        href="/highscore-ssr"
+        href="http://localhost:5080/highscore-ssr"
+        target="_self"
         style={{
-          display: "inline-block",
           padding: "0.5rem 1rem",
           fontSize: "1.2rem",
           cursor: "pointer",
@@ -87,20 +90,26 @@ export default function StartPage() {
           borderRadius: "8px",
           background: "#6aaa64",
           color: "white",
+          border: "none",
+          display: "inline-block",
           textDecoration: "none"
         }}
       >
         Highscore
       </a>
 
+
       <button
         onClick={() => navigate("/about")}
         style={{
-          padding: "0.5rem 1rem",
-          fontSize: "1.2rem",
-          cursor: "pointer",
-          margin: "10px",
-          borderRadius: "8px"
+  padding: "0.5rem 1rem",
+  fontSize: "1.2rem",
+  cursor: "pointer",
+  margin: "10px",
+  borderRadius: "8px",
+  background: "#6aaa64",
+  color: "white",
+  border: "none"
         }}
       >
         About page
