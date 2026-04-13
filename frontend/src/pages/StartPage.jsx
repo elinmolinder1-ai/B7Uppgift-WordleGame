@@ -3,20 +3,15 @@
 // and then navigates the user to the GamePage. 
 // The page also includes buttons to view the highscore list and the about page.
 
-
 import { useState } from "react";
 import { useNavigate } from "react-router-dom";
 
 export default function StartPage() {
   const [selectedLength, setSelectedLength] = useState(5);
-
-    // If the word must have unique letters
   const [uniqueLetters, setUniqueLetters] = useState(true);
 
-  // For navigation to other pages
   const navigate = useNavigate();
 
-   // Start a new game by sending settings to backend
   async function startGame() {
     try {
       const res = await fetch("/api/game/start", {
@@ -26,12 +21,9 @@ export default function StartPage() {
           wordLength: selectedLength,
           uniqueLetters: uniqueLetters
         })
-
       });
 
       const data = await res.json();
-
-      // Go to the GamePage with the returned gameId
       navigate(`/game/${data.gameId}`);
     } catch (error) {
       console.error("Could not start game:", error);
@@ -83,18 +75,23 @@ export default function StartPage() {
         Start Game
       </button>
 
-      <button
-        onClick={() => navigate("/highscore")}
+      {/*SSR highscore must use a normal <a> link */}
+      <a
+        href="/highscore-ssr"
         style={{
+          display: "inline-block",
           padding: "0.5rem 1rem",
           fontSize: "1.2rem",
           cursor: "pointer",
           margin: "10px",
-          borderRadius: "8px"
+          borderRadius: "8px",
+          background: "#6aaa64",
+          color: "white",
+          textDecoration: "none"
         }}
       >
         Highscore
-      </button>
+      </a>
 
       <button
         onClick={() => navigate("/about")}
@@ -108,7 +105,6 @@ export default function StartPage() {
       >
         About page
       </button>
-
     </div>
   );
 }
