@@ -11,7 +11,6 @@ export default function App() {
       <Routes>
         <Route path="/" element={<StartPage />} />
         <Route path="/game/:gameId" element={<GamePage />} />
-        <Route path="/highscore" element={<HighscorePage />} />
         <Route path="/about" element={<AboutPage />} />
       </Routes>
     </BrowserRouter>
