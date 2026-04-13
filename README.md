@@ -14,8 +14,8 @@ When the player finds the correct word, the game ends and the player can submit 
 
 The project includes three pages:
 
-The game page (React)
+* The game page (React)
 
-A server‑rendered highscore list
+* A server‑rendered highscore list
 
-This static information page
+* This static information page
