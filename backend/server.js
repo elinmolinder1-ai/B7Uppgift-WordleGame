@@ -2,7 +2,6 @@
 // It also loads the Swedish word list before the server starts.
 // The server handles game logic, highscores, and simple page routes.
 */
-
 import express from "express";
 import gameRoutes from "./routes/gameRoutes.js";
 import scoreRoutes from "./routes/scoreRoutes.js";
