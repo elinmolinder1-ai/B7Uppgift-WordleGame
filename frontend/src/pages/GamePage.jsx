@@ -1,15 +1,9 @@
 import { useEffect, useState } from "react";
-import { useParams, useNavigate } from "react-router-dom";
+import { useParams } from "react-router-dom";
 
 export default function GamePage() {
-
-  // Get gameId from the URL
   const { gameId } = useParams();
 
-
-  const navigate = useNavigate();
-
-  // Game state from backend
   const [wordLength, setWordLength] = useState(null);
   const [attemptsLeft, setAttemptsLeft] = useState(null);
   const [guesses, setGuesses] = useState([]);
@@ -17,21 +11,16 @@ export default function GamePage() {
   const [gameOver, setGameOver] = useState(false);
   const [win, setWin] = useState(false);
 
-  // Highscore-data
   const [playerName, setPlayerName] = useState("");
   const [startTime, setStartTime] = useState(null);
   const [uniqueLetters, setUniqueLetters] = useState(false);
   const [correctWord, setCorrectWord] = useState("");
 
-
-  // Load game data when page opens
   useEffect(() => {
     async function loadGame() {
       const res = await fetch(`/api/game/${gameId}`);
       const data = await res.json();
 
-
-      // Set game info from backend
       setWordLength(data.wordLength);
       setAttemptsLeft(data.attemptsLeft);
       setGuesses(data.guesses);
@@ -39,81 +28,95 @@ export default function GamePage() {
       setWin(data.win);
       setUniqueLetters(data.uniqueLetters);
 
-      // Start timer
       setStartTime(Date.now());
     }
 
     loadGame();
   }, [gameId]);
 
-async function sendGuess() {
-  if (guess.length !== wordLength) return;
+  async function sendGuess() {
+    if (guess.length !== wordLength) return;
 
-  const res = await fetch("/api/game/guess", {
-    method: "POST",
-    headers: { "Content-Type": "application/json" },
-    body: JSON.stringify({ gameId, guess })
-  });
+    const res = await fetch("/api/game/guess", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ gameId, guess })
+    });
 
-  if (!res.ok) {
-    const text = await res.text();
-    console.error("Server error:", text);
-    return;
+    if (!res.ok) {
+      const text = await res.text();
+      console.error("Server error:", text);
+      return;
+    }
+
+    const data = await res.json();
+
+    setGuesses([...guesses, data.result]);
+    setAttemptsLeft(data.attemptsLeft);
+    setGameOver(data.gameOver);
+    setWin(data.win);
+    setUniqueLetters(data.uniqueLetters);
+    setGuess("");
+
+    if (data.gameOver && data.win) {
+      setCorrectWord(data.correctWord);
+    }
   }
 
-  const data = await res.json();
+  async function submitHighscore() {
+    const timeTaken = Date.now() - startTime;
 
-  setGuesses([...guesses, data.result]);
-  setAttemptsLeft(data.attemptsLeft);
-  setGameOver(data.gameOver);
-  setWin(data.win);
-  setUniqueLetters(data.uniqueLetters);  
-  setGuess("");
+    await fetch("/api/highscore", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({
+        name: playerName,
+        timeTaken,
+        guesses,
+        wordLength,
+        uniqueLetters,
+        word: correctWord
+      })
+    });
 
-  if (data.gameOver && data.win) {
-    setCorrectWord(data.correctWord);
+    window.location.href = "http://localhost:5080/highscore-ssr";
   }
-}
 
-
-
-
-  // Send highscore to backend
- async function submitHighscore() {
-  const timeTaken = Date.now() - startTime;
-
-  await fetch("/api/highscore", {
-    method: "POST",
-    headers: { "Content-Type": "application/json" },
-    body: JSON.stringify({
-      name: playerName,
-      timeTaken,
-      guesses,
-      wordLength,
-      uniqueLetters,
-      word: correctWord   // send the right word 
-    })
-  });
-
-  window.location.href ="/highscore-ssr"
-;}
-
-
-  // Show loading text until game data is ready
   if (!wordLength) return <p>Loading game...</p>;
 
-  // Choose tile color based on result
   function getColor(result) {
-    if (result === "correct") return "#6aaa64";  
-    if (result === "misplaced") return "#c9b458";
-    return "#787c7e";                             
+    if (result === "correct") return "#6aaa64";
+    if (result === "misplaced") return "#ffd621";
+    if (result === "wrong") return "#d32f2f";       
+    return "#787c7e";
   }
 
-  return (
-    <div style={{ padding: "2rem" }}>
-      <h1>Wordle Game</h1>
+  const buttonStyle = {
+    padding: "0.5rem 1rem",
+    fontSize: "1.2rem",
+    cursor: "pointer",
+    margin: "10px",
+    borderRadius: "8px",
+    background: "#6aaa64",
+    color: "white",
+    border: "none"
+  };
 
-      <p>Attempts left: {attemptsLeft}</p>
+  return (
+    <div
+      style={{
+        maxWidth: "500px",
+        margin: "0 auto",
+        padding: "2rem",
+        textAlign: "center",
+        fontFamily: "Arial, sans-serif"
+      }}
+    >
+      <h1 style={{ marginBottom: "1rem" }}>Wordle Game</h1>
+
+      <p style={{ fontSize: "1.2rem", marginBottom: "1rem" }}>
+        Attempts left: <strong>{attemptsLeft}</strong>
+      </p>
 
       <input
         type="text"
@@ -121,38 +124,49 @@ async function sendGuess() {
         value={guess}
         onChange={(e) => setGuess(e.target.value.toUpperCase())}
         disabled={gameOver}
-        style={{ fontSize: "1.5rem", textTransform: "uppercase" }}
+        style={{
+          fontSize: "1.5rem",
+          textTransform: "uppercase",
+          padding: "0.5rem",
+          width: "80%",
+          borderRadius: "6px",
+          border: "2px solid #ccc",
+          outline: "none",
+          textAlign: "center"
+        }}
       />
 
-      <button
-        onClick={sendGuess}
-        disabled={gameOver}
-        style={{ marginLeft: "1rem", padding: "0.5rem 1rem" }}
-      >
+      <button onClick={sendGuess} disabled={gameOver} style={buttonStyle}>
         Guess
       </button>
 
-      {/* Wordle-rutorna */}
-      <div style={{ marginTop: "2rem", display: "flex", flexDirection: "column", alignItems: "center" }}>
+      <div
+        style={{
+          marginTop: "2rem",
+          display: "flex",
+          flexDirection: "column",
+          alignItems: "center"
+        }}
+      >
         {guesses.map((g, i) => (
           <div key={i} style={{ display: "flex", marginBottom: "0.5rem" }}>
             {g.map((letterObj, j) => (
               <div
                 key={j}
                 style={{
-                  width: "50px",
-                  height: "50px",
+                  width: "55px",
+                  height: "55px",
                   marginRight: "5px",
                   display: "flex",
                   justifyContent: "center",
                   alignItems: "center",
-                  textAlign: "center",
                   fontSize: "1.5rem",
                   fontWeight: "bold",
                   color: "white",
                   backgroundColor: getColor(letterObj.result),
                   textTransform: "uppercase",
-                  borderRadius: "4px"
+                  borderRadius: "4px",
+                  boxShadow: "0 2px 4px rgba(0,0,0,0.2)"
                 }}
               >
                 {letterObj.letter}
@@ -163,27 +177,29 @@ async function sendGuess() {
       </div>
 
       {gameOver && (
-        <h2 style={{ marginTop: "1rem" }}>
+        <h2 style={{ marginTop: "1rem", color: win ? "#6aaa64" : "#b00020" }}>
           {win ? "You won!" : "Game over!"}
         </h2>
       )}
 
-      {/* Highscore-form */}
       {gameOver && win && (
         <div style={{ marginTop: "1.5rem" }}>
-          <h3>Du vann! Skriv ditt namn:</h3>
+          <h3 style={{ color: "#6aaa64" }}>🎉 Du vann! Skriv ditt namn:</h3>
 
           <input
             type="text"
             value={playerName}
             onChange={(e) => setPlayerName(e.target.value)}
-            style={{ fontSize: "1.2rem", padding: "0.3rem" }}
+            style={{
+              fontSize: "1.2rem",
+              padding: "0.3rem",
+              borderRadius: "6px",
+              border: "2px solid #ccc",
+              outline: "none"
+            }}
           />
 
-          <button
-            onClick={submitHighscore}
-            style={{ marginLeft: "1rem", padding: "0.5rem 1rem" }}
-          >
+          <button onClick={submitHighscore} style={buttonStyle}>
             Skicka resultat
           </button>
         </div>
