@@ -12,6 +12,8 @@ export default function App() {
         <Route path="/" element={<StartPage />} />
         <Route path="/game/:gameId" element={<GamePage />} />
         <Route path="/about" element={<AboutPage />} />
+        <Route path="*" element={null} />
+
       </Routes>
     </BrowserRouter>
   );
