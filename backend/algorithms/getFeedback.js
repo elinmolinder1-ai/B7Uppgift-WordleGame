@@ -24,7 +24,7 @@ export function getFeedback(guess, answer) {
     }
   }
 
-  // "misplaced" or "incorrect"
+  // "misplaced" or "wrong"
   for (let i = 0; i < guess.length; i++) {
     if (result[i].result === "correct") continue;
 
@@ -34,7 +34,7 @@ export function getFeedback(guess, answer) {
       result[i].result = "misplaced";
       answerLetters[index] = null; //used letter
     } else {
-      result[i].result = "incorrect";
+      result[i].result = "wrong";
     }
   }
 
