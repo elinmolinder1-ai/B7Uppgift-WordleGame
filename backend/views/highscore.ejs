@@ -4,16 +4,18 @@
   <meta charset="UTF-8" />
   <title>Highscores</title>
 
-  <!-- Simple styling for clean layout -->
   <style>
     body {
       font-family: Arial, sans-serif;
       padding: 2rem;
       background: #f5f5f5;
+      max-width: 600px;
+      margin: 0 auto;
     }
 
     h1 {
       margin-bottom: 1rem;
+      text-align: center;
     }
 
     .score {
@@ -22,6 +24,22 @@
       margin-bottom: 0.8rem;
       border-radius: 6px;
       box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+    }
+
+    .score strong {
+      color: #6aaa64;
+      font-size: 1.2rem;
+    }
+
+    ul {
+      margin-top: 0.5rem;
+      padding-left: 1.2rem;
+    }
+
+    li {
+      font-family: monospace;
+      font-size: 1.1rem;
+      margin-bottom: 0.2rem;
     }
 
     .back-btn {
@@ -45,23 +63,39 @@
 
   <h1>Highscores</h1>
 
-  <!-- If no scores exist -->
   <% if (scores.length === 0) { %>
     <p>No highscores yet.</p>
   <% } %>
 
-  <!-- Loop through all scores -->
   <% scores.forEach(score => { %>
     <div class="score">
       <strong><%= score.name %></strong><br />
+
       Time: <%= score.timeTaken %> ms<br />
       Word length: <%= score.wordLength %><br />
-      Unique letters: <%= score.uniqueLetters ? "Yes" : "No" %>
+      Unique letters: <%= score.uniqueLetters ? "Yes" : "No" %><br />
+
+<p><strong>Guesses:</strong></p>
+<ul>
+  <% if (Array.isArray(score.guesses) && score.guesses.length > 0) { %>
+    <% score.guesses.forEach(g => { %>
+
+      <% if (Array.isArray(g)) { %>
+        <li><%= g.map(l => l.letter).join("") %></li>
+      <% } else { %>
+        <li><%= g %></li>
+      <% } %>
+
+    <% }) %>
+  <% } else { %>
+    <li>(no guesses saved)</li>
+  <% } %>
+</ul>
+
     </div>
   <% }) %>
 
-  <!-- Button to go back to React start page -->
-  <a href="/" class="back-btn">Start new game</a>
+  <a href="http://localhost:5173" class="back-btn">Start new game</a>
 
 </body>
 </html>
