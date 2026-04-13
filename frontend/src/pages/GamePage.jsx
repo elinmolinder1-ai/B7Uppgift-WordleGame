@@ -95,8 +95,8 @@ async function sendGuess() {
     })
   });
 
-  navigate("/highscore");
-}
+  window.location.href ="/highscore-ssr"
+;}
 
 
   // Show loading text until game data is ready
