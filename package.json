@@ -1,0 +1,23 @@
+{
+  "name": "b7uppgift-wordlegame",
+  "version": "1.0.0",
+  "description": "**About this project**",
+  "main": "index.js",
+  "scripts": {
+    "install": "cd backend && npm install && cd ../frontend && npm install",
+    "build": "cd frontend && npm run build",
+    "start": "cd backend && npm start"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/elinmolinder1-ai/B7Uppgift-WordleGame.git"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "type": "commonjs",
+  "bugs": {
+    "url": "https://github.com/elinmolinder1-ai/B7Uppgift-WordleGame/issues"
+  },
+  "homepage": "https://github.com/elinmolinder1-ai/B7Uppgift-WordleGame#readme"
+}
