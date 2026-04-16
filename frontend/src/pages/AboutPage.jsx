@@ -12,9 +12,26 @@ export default function AboutPage() {
 
       {/* Simple description */}
       <p>
-        This is a Wordle-style game built with React and Express.
-        You can choose word length, unique letters, and try to guess the word
-        within a limited number of attempts.
+
+This game is inspired by Wordle. The goal is to guess a secret word.
+You can choose the word length and if the word may contain repeated letters.
+The game then picks a random word, and you try to find it.
+
+Type your guess and press “Guess”.
+After each guess, the letters will show colors:
+
+Green – the letter is correct and in the right position
+
+Yellow – the letter is in the word but in a different position
+
+Red – the letter is not in the word
+
+You have a limited number of attempts.
+If you guess the word, you win the game.
+
+After winning, you can enter your name and save your result to the highscore list.
+
+Have fun playing!
       </p>
 
       {/* Button to go back and start a new game */}
