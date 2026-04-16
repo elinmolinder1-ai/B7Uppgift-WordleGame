@@ -15,7 +15,7 @@ export default function AboutPage() {
 
 This game is inspired by Wordle. The goal is to guess a secret word.
 You can choose the word length and if the word may contain repeated letters.
-The game then picks a random word, and you try to find it.
+The game then picks a random word, and you try to find it!
 
 Type your guess and press “Guess”.
 After each guess, the letters will show colors:
